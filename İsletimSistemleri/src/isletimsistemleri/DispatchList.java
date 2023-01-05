@@ -6,7 +6,8 @@ public class DispatchList {
 	LinkedList<Item> dispatchList;
 	FCFSList fcfs = new FCFSList();
 	FirstPriList fpl = new FirstPriList();
-	SecondPriList spl=fpl.spl;
+	SecondPriList spl = fpl.spl;
+	RRList rr = spl.rr;
 	int damn_timer = 0;
 
 	public DispatchList() {
@@ -30,7 +31,7 @@ public class DispatchList {
 		int size = dispatchList.size();
 		// System.out.println(size);
 		int used_items_count = 0;
-		while (used_items_count != size || !fpl.FPL_isEmpty() || !spl.SPL_isEmpty()) {
+		while (used_items_count != size || !fpl.FPL_isEmpty() || !spl.SPL_isEmpty()||!rr.RR_isEmpty()) {
 			for (int i = 0; i < size; i++) {
 				if (dispatchList.size() == 0)
 					break;
@@ -48,9 +49,12 @@ public class DispatchList {
 						if (dispatchList.get(0).oncelik == 1) {
 							used_items_count++;
 							fpl.FPL_add(dispatchList.remove());
-						} else {
+						} else if (dispatchList.get(0).oncelik == 2) {
 							used_items_count++;
 							spl.SPL_add(dispatchList.remove());
+						} else {
+							used_items_count++;
+							rr.RR_add(dispatchList.remove());
 						}
 					}
 
@@ -68,10 +72,21 @@ public class DispatchList {
 			} else if (!(spl.SPL_isEmpty())) {
 				int spl_ExecTime = spl.SPL_execute();
 				damn_timer += spl_ExecTime;
-			} else
+			} else if(!(rr.RR_isEmpty()))
+			{
+				int rr_ExecTime = rr.RR_execute();
+				damn_timer += rr_ExecTime;
+			}
+			else
 				damn_timer++;
 
 			System.out.println("timer: " + damn_timer);
 		}
+		
+		System.out.println("\nFCFS : "+fcfs.kuyruk.kuyrukSize());
+		System.out.println("FPL : "+fpl.kuyruk.kuyrukSize());
+		System.out.println("SPL : "+spl.kuyruk.kuyrukSize());
+		System.out.println("RR : "+rr.kuyruk.kuyrukSize());
+		
 	}
 }

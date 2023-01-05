@@ -31,6 +31,7 @@ public class FirstPriList {
 			System.out.println(spl.kuyruk.kuyrukSize()); 
 			//spl.SPL_execute();
 		}
+		//System.out.println("--------------"+kuyruk.kuyrukSize()+"-----------");
 		return timer;
 	}
 }

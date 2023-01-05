@@ -2,6 +2,7 @@ package isletimsistemleri;
 
 public class SecondPriList {
 	Kuyruk kuyruk = new Kuyruk();
+	RRList rr=new RRList();
 
 	void SPL_add(Item item) {
 		kuyruk.kuyrugaEkle(item);
@@ -21,10 +22,10 @@ public class SecondPriList {
 		item.burstTime--;
 		timer++;
 		System.out.println("varis: " + item.varis +"  oncelik: "+item.oncelik +"  burst: " + item.burstTime);
-		if (item.burstTime == 0) {
-			System.out.println(item.varis + " item bitti.");
+		if (item.burstTime > 0) {
+			rr.RR_add(item);
 		}
-		// 3. kuyruğa ekle
+		//System.out.println("--------------"+kuyruk.kuyrukSize()+"-----------");
 		return timer;
 	}
 }
