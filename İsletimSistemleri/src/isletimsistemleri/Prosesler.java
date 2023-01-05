@@ -6,12 +6,19 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Prosesler {
+	
+	public static DispatchList dl=null;
+	
+	public Prosesler(DispatchList dl)
+	{
+		Prosesler.dl=dl;
+	}
 
-	public void process(DispatchList dl) throws IOException {
+	public void process() throws IOException {
 
 		List<String> allLines = Files.readAllLines(Paths.get("./txtfolder/giris.txt"));// dosyadaki satirlari listede
 																						// tutacak
-
+		int idSayac = 0;
 		for (int i = 0; i < allLines.size(); i++) {
 
 			String satir = allLines.get(i);// ilk satir alindi
@@ -28,15 +35,16 @@ public class Prosesler {
 				if (ch == ' ')
 					continue;
 
-				else if (j == satir.length() - 1) {// son satirdaki veriyi de almayi sagliyor ve ilgili Item degerine atamayi sagliyor
+				else if (j == satir.length() - 1) {// son satirdaki veriyi de almayi sagliyor ve ilgili Item degerine
+													// atamayi sagliyor
 					veri += ch;
 					item.burstTime = Integer.parseInt(veri);
 
 				} else if (ch != ',') {// verileri veri nesnesine atamayi sagliyor ve verileri ayirmayi sagliyor
 					veri += ch;
 
-				} else {//alinan verileri ilgili Item degerlerine atiyor
-					
+				} else {// alinan verileri ilgili Item degerlerine atiyor
+
 					sayac++;
 					switch (sayac) {
 					case 0:
@@ -46,9 +54,13 @@ public class Prosesler {
 						item.oncelik = Integer.parseInt(veri);
 						break;
 					}
+
 					veri = "";
 				}
 			}
+			item.id = idSayac;
+			idSayac++;
+			item.askiyaAlinma = item.varis;
 			// bir satirdaki veirleri ayırdık ve Item classına atadık
 			dl.ListeyeEkle(item);
 		}
