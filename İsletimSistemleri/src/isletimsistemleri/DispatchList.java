@@ -1,14 +1,14 @@
 package isletimsistemleri;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 public class DispatchList {
 	LinkedList<Item> dispatchList;
-	
-	
+
 	FCFSList fcfs = new FCFSList();
 	FirstPriList fpl = new FirstPriList();
-	SecondPriList spl = new SecondPriList();
+	SecondPriList spl = fpl.spl;
 	RRList rr = spl.rr;
 	int damn_timer = 0;
 
@@ -63,8 +63,6 @@ public class DispatchList {
 				}
 
 			} // for bitis //time'a gore degerler atanıyor.
-				// System.out.println("item count: " +used_items_count);
-				// System.out.print("timer: " + damn_timer + " --> ");
 
 			if (!(fcfs.FCFS_isEmpty())) {
 				int fcfs_ExecTime = fcfs.FCFS_execute(damn_timer);
@@ -80,50 +78,93 @@ public class DispatchList {
 				damn_timer += rr_ExecTime;
 			} else
 				damn_timer++;
-
 		}
-
-//		System.out.println("\nFCFS : "+fcfs.kuyruk.kuyrukSize());
-//		System.out.println("FPL : "+fpl.kuyruk.kuyrukSize());
-//		System.out.println("SPL : "+spl.kuyruk.kuyrukSize());
-//		System.out.println("RR : "+rr.kuyruk.kuyrukSize());
 	}
 
 	public void TimeOut_Scanner(int gecenZaman) {
+		String text = "";
 		for (int i = 0; i < fcfs.kuyruk.kuyrukSize(); i++) {// fcfs checking
 			Item item = fcfs.kuyruk.Getir(i);
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
 			{
-				System.out.println(gecenZaman + " sn proses zamanasimi" + "(id:" + item.id + "  oncelik: "
-						+ item.oncelik + "  kalan sure: " + item.burstTime + " sn)");
+				Random rng = new Random();
+
+				// Rastgele RGB renkleri oluşturma
+				int r = rng.nextInt(256);
+				int g = rng.nextInt(256);
+				int b = rng.nextInt(256);
+
+				text = String.format(
+						"\033[38;2;%d;%d;%dm%d sn proses zamanasimi      (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+						r, g, b, gecenZaman, item.id, item.oncelik, item.burstTime);
+
+				System.out.println(text);
+
 				fcfs.kuyruk.kuyruktanCikar(i);
+				i--;
 			}
 		}
 		for (int i = 0; i < fpl.kuyruk.kuyrukSize(); i++) {// firstPriorityList checking
 			Item item = fpl.kuyruk.Getir(i);
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
 			{
-				System.out.println(gecenZaman + " sn proses zamanasimi" + "(id:" + item.id + "  oncelik: "
-						+ item.oncelik + "  kalan sure: " + item.burstTime + " sn)");
+				Random rng = new Random();
+
+				// Rastgele RGB renkleri oluşturma
+				int r = rng.nextInt(256);
+				int g = rng.nextInt(256);
+				int b = rng.nextInt(256);
+
+				text = String.format(
+						"\033[38;2;%d;%d;%dm%d sn proses zamanasimi      (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+						r, g, b, gecenZaman, item.id, item.oncelik, item.burstTime);
+
+				System.out.println(text);
+
 				fpl.kuyruk.kuyruktanCikar(i);
+				i--;
 			}
 		}
 		for (int i = 0; i < spl.kuyruk.kuyrukSize(); i++) {// secondPriorityList checking
 			Item item = spl.kuyruk.Getir(i);
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
 			{
-				System.out.println(gecenZaman + " sn proses zamanasimi" + "(id:" + item.id + "  oncelik: "
-						+ item.oncelik + "  kalan sure: " + item.burstTime + " sn)");
+				Random rng = new Random();
+
+				// Rastgele RGB renkleri oluşturma
+				int r = rng.nextInt(256);
+				int g = rng.nextInt(256);
+				int b = rng.nextInt(256);
+
+				text = String.format(
+						"\033[38;2;%d;%d;%dm%d sn proses zamanasimi      (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+						r, g, b, gecenZaman, item.id, item.oncelik, item.burstTime);
+
+				System.out.println(text);
+
 				spl.kuyruk.kuyruktanCikar(i);
+				i--;
 			}
 		}
 		for (int i = 0; i < rr.kuyruk.kuyrukSize(); i++) {// Round-Robin checking
 			Item item = rr.kuyruk.Getir(i);
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
 			{
-				System.out.println(gecenZaman + " sn proses zamanasimi" + "(id:" + item.id + "  oncelik: "
-						+ item.oncelik + "  kalan sure: " + item.burstTime + " sn)");
+				Random rng = new Random();
+
+				// Rastgele RGB renkleri oluşturma
+				int r = rng.nextInt(256);
+				int g = rng.nextInt(256);
+				int b = rng.nextInt(256);
+				
+				text = String.format(
+						"\033[38;2;%d;%d;%dm%d sn proses zamanasimi      (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+						r, g, b, gecenZaman, item.id, item.oncelik, item.burstTime);
+
+				System.out.println(text);
+
 				rr.kuyruk.kuyruktanCikar(i);
+				i--;
 			}
 		}
 

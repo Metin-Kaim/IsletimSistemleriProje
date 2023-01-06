@@ -64,7 +64,6 @@ public class Prosesler {
 			// bir satirdaki veirleri ayırdık ve Item classına atadık
 			dl.ListeyeEkle(item);
 		}
-		System.out.println("dispatcher cagirildi");
 		dl.Fuckin_Dispatcher();
 	}
 }

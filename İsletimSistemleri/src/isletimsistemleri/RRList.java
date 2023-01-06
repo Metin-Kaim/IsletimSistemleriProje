@@ -1,5 +1,7 @@
 package isletimsistemleri;
 
+import java.util.Random;
+
 public class RRList {
 	Kuyruk kuyruk = new Kuyruk();
 	int sayac = 0;
@@ -16,39 +18,60 @@ public class RRList {
 	Item cikanEleman = null;
 
 	int RR_execute(int zaman) {// maine gidecek olan timer(ekleme islemi olacak)
-		DispatchList dl=Prosesler.dl;
-		System.out.println("\nRound Robin");
-		//System.out.println("RR Size: " + kuyruk.kuyrukSize());
+
+		Random rng = new Random();
+
+		// Rastgele RGB renkleri oluşturma
+		int r = rng.nextInt(256);
+		int g = rng.nextInt(256);
+		int b = rng.nextInt(256);
+
+		// Rastgele renkleri kullanarak yazıyı biçimlendirme
+
+		DispatchList dl = Prosesler.dl;
+
+//		System.out.println();
+//		String text = String.format("\033[38;2;%d;%d;%dmRound Robin\033[0m", r, g, b);
+//		System.out.println(text);
+		String text = "";
 		int timer = 0;
+
 		Item item = kuyruk.Getir(sayac);
 
-		System.out.println((zaman + timer) + " sn proses basladi" + "(id:" + item.id + "  oncelik: " + item.oncelik
-				+ "  kalan sure: " + item.burstTime + " sn)");
-		item.burstTime--;
+		text = String.format(
+				"\033[38;2;%d;%d;%dm%2d sn proses basladi         (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m", r,
+				g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
+
+		System.out.println(text);
+
 		timer++;
-		//System.out.println("\nZaman "+ (zaman+timer)+" varis: " + item.varis + "  oncelik: " + item.oncelik + "  burst: " + item.burstTime);
+		item.burstTime--;
+
+		item.askiyaAlinma = zaman + timer;
 
 		if (item.burstTime == 0) {
-			System.out.println((zaman + timer) + " sn proses sonlandi" + "(id:" + item.id + "  oncelik: " + item.oncelik
-					+ "  kalan sure: " + item.burstTime + " sn)");
+			text = String.format(
+					"\033[38;2;%d;%d;%dm%2d sn proses sonlandi        (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+					r, g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
+
+			System.out.println(text);
+
 			kuyruk.kuyruktanCikar(sayac);
+
 			if (sayac == kuyruk.kuyrukSize())
 				sayac = 0;
 		} else {
-			
-			//System.out.println("---------------------------------");
-			//System.out.println("sayac:" + sayac);
-			System.out.println((zaman + timer) + " sn proses askida" + "(id:" + item.id + "  oncelik: " + item.oncelik
-					+ "  kalan sure: " + item.burstTime + " sn)");
-			item.askiyaAlinma=zaman+timer;
-			dl.TimeOut_Scanner(zaman+timer);
-			sayac = (sayac + 1) % kuyruk.kuyrukSize();
-			
-		}
+			text = String.format(
+					"\033[38;2;%d;%d;%dm%2d sn proses askida          (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+					r, g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
 
-		//System.out.println("sayac:" + sayac);
-		// System.out.println("-------------------"+ kuyruk.kuyrukSize()
-		// +"--------------");
+			System.out.println(text);
+
+			dl.TimeOut_Scanner(zaman + timer);
+
+			sayac = (sayac + 1) % kuyruk.kuyrukSize();
+
+		}
 		return timer;
 	}
 }

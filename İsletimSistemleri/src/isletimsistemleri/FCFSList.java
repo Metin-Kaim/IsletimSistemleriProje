@@ -1,14 +1,9 @@
 package isletimsistemleri;
 
+import java.util.Random;
+
 public class FCFSList {
 
-	//private DispatchList dl=Prosesler.dl;
-	
-//	public FCFSList(DispatchList dl)
-//	{
-//		this.dl=dl;
-//	}
-	
 	Kuyruk kuyruk = new Kuyruk();
 
 	void FCFS_add(Item item) {
@@ -21,37 +16,53 @@ public class FCFSList {
 	}
 
 	int FCFS_execute(int zaman) {// maine gidecek olan timer(ekleme islemi olacak)
-		DispatchList dl=Prosesler.dl;
-		System.out.println("\nFCFS");
+
+		Random rng = new Random();
+
+		// Rastgele RGB renkleri oluşturma
+		int r = rng.nextInt(256);
+		int g = rng.nextInt(256);
+		int b = rng.nextInt(256);
+
+		// Rastgele renkleri kullanarak yazıyı biçimlendirme
+
+		DispatchList dl = Prosesler.dl;
+
+		// System.out.println();
+		// String text = String.format("\033[38;2;%d;%d;%dmFCFS\033[0m", r, g, b);
+		// System.out.println(text);
 		int timer = 0;
-		// Item item = kuyruk.Getir(0);
-//		System.out.println("varis: " + item.varis +"  oncelik: "+item.oncelik +"  burst: " + item.burstTime);
-//		item.burstTime--;
-//		timer++;
-//		System.out.println("varis: " + item.varis +"  oncelik: "+item.oncelik +"  burst: " + item.burstTime);
-//		
-//		if(item.burstTime<=0)
-//		{
-//			kuyruk.kuyruktanCikar();
-//		}
-		// while (kuyruk.kuyrukSize() != 0) {
+		String text = "";
 		Item item = kuyruk.kuyruktanCikar();
-		System.out.println((zaman + timer) + " sn proses basladi" + "(id:" + item.id + "  oncelik: " + item.oncelik
-				+ "  kalan sure: " + item.burstTime + " sn)");
+
+		text = String.format(
+				"\033[38;2;%d;%d;%dm%2d sn proses basladi         (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m", r,
+				g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
+
+		System.out.println(text);
+
 		while (item.burstTime != 0) {
 			item.burstTime--;
 			timer++;
-			if (item.burstTime > 0)
-			{
-				System.out.println((zaman + timer) + " sn proses yurutuluyor" + "(id:" + item.id + "  oncelik: " + item.oncelik
-						+ "  kalan sure: " + item.burstTime + " sn)");
-				dl.TimeOut_Scanner(zaman+timer);
-			}
-			else
-				System.out.println((zaman + timer) + " sn proses sonlandi" + "(id:" + item.id + "  oncelik: " + item.oncelik
-						+ "  kalan sure: " + item.burstTime + " sn)");
+
+			item.askiyaAlinma = zaman + timer;
+
+			if (item.burstTime > 0) {
+				text = String.format(
+						"\033[38;2;%d;%d;%dm%2d sn proses yurutuluyor     (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+						r, g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
+
+				System.out.println(text);
+			} else
+				text = String.format(
+						"\033[38;2;%d;%d;%dm%2d sn proses sonlandi        (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
+						r, g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
+
+			System.out.println(text);
+
+			dl.TimeOut_Scanner(zaman + timer);
 		}
-		// }
+
 		return timer;
 	}
 }

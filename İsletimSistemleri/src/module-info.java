@@ -6,4 +6,5 @@
  *
  */
 module isletimsistemleri {
+	requires java.desktop;
 }
