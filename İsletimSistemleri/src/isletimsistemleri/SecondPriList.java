@@ -30,18 +30,15 @@ public class SecondPriList {
 		int g = rng.nextInt(256);
 		int b = rng.nextInt(256);
 
-		// Rastgele renkleri kullanarak yazıyı biçimlendirme
-
 		DispatchList dl = Prosesler.dl;
 
-//		System.out.println();
-//		String text = String.format("\033[38;2;%d;%d;%dmSecond Priority\033[0m", r, g, b);
-//		System.out.println(text);
 		String text = "";
-		int timer = 0;
+
+		int timer = 0;// prosesin işlem gördüğü toplam zamanı tutan değer
 
 		Item item = kuyruk.kuyruktanCikar();
 
+		// Rastgele renkleri kullanarak yazıyı biçimlendirme
 		text = String.format(
 				"\033[38;2;%d;%d;%dm%2d sn proses basladi         (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m", r,
 				g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
@@ -51,13 +48,14 @@ public class SecondPriList {
 		timer++;
 		item.burstTime--;
 
-		item.askiyaAlinma = zaman + timer;
+		item.askiyaAlinma = zaman + timer;// ilgili itemin askıya alınma zamanını güncelliyor. (genel zaman + prosesin
+											// işlem için harcadığı zaman)
 
-		if (item.burstTime > 0) {
+		if (item.burstTime > 0) { // diğer kuyruğa atama işlemi
 
 			item.oncelik++;
 
-			rr.RR_add(item);
+			rr.RR_add(item);// RoundRobin kuyruğuna atama
 
 			text = String.format(
 					"\033[38;2;%d;%d;%dm%2d sn proses askida          (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
@@ -73,7 +71,7 @@ public class SecondPriList {
 			System.out.println(text);
 		}
 
-		dl.TimeOut_Scanner((zaman + timer));
+		dl.TimeOut_Scanner((zaman + timer)); // zaman aşımı kontrolü
 
 		return timer;
 	}

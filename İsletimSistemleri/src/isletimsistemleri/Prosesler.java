@@ -6,24 +6,25 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Prosesler {
-	
-	public static DispatchList dl=null;
-	
-	public Prosesler(DispatchList dl)
+
+	public static DispatchList dl = null;
+
+	public Prosesler(DispatchList dl) // her class'ın main içinde oluşturulan dispatchlist'e erişimini sağlamak için
 	{
-		Prosesler.dl=dl;
+		Prosesler.dl = dl;
 	}
 
 	public void process() throws IOException {
 
 		List<String> allLines = Files.readAllLines(Paths.get("./txtfolder/giris.txt"));// dosyadaki satirlari listede
 																						// tutacak
-		int idSayac = 0;
-		for (int i = 0; i < allLines.size(); i++) {
+		int idSayac = 0; // itemlere id atamak için tutulan sayaç
+
+		for (int i = 0; i < allLines.size(); i++) { // tüm satırları gezmemizi sağlıyor
 
 			String satir = allLines.get(i);// ilk satir alindi
 
-			Item item = new Item();
+			Item item = new Item(); // her satır için bir item
 
 			int sayac = -1;// satirdaki verileri varis, oncelik ve burst time'a gore ayiriyor.
 
@@ -55,15 +56,19 @@ public class Prosesler {
 						break;
 					}
 
-					veri = "";
+					veri = ""; //veri stringini sıfırlıyor
 				}
-			}
-			item.id = idSayac;
+			}// bir satirdaki verileri ayırdık ve Item classına atadık
+			
+			item.id = idSayac; //id ataması
+			
 			idSayac++;
-			item.askiyaAlinma = item.varis;
-			// bir satirdaki veirleri ayırdık ve Item classına atadık
+			
+			item.askiyaAlinma = item.varis; //itemlere default askıya alınma zamanı atıyor (varış zamanı)
+			
+			
 			dl.ListeyeEkle(item);
-		}
-		dl.Fuckin_Dispatcher();
+		}//tüm atama işlemleri bitti. dispatchList dolu
+		dl.General_Dispatcher();
 	}
 }

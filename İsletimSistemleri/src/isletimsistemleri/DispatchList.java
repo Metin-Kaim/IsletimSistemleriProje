@@ -6,11 +6,14 @@ import java.util.Random;
 public class DispatchList {
 	LinkedList<Item> dispatchList;
 
-	FCFSList fcfs = new FCFSList();
+	KullanıcıIsıKuyruk uj = new KullanıcıIsıKuyruk();
+
+	GercekZamanliKuyruk gzk = new GercekZamanliKuyruk();
 	FirstPriList fpl = new FirstPriList();
 	SecondPriList spl = fpl.spl;
 	RRList rr = spl.rr;
-	int damn_timer = 0;
+
+	int damn_timer = 0;// Genel zaman
 
 	public DispatchList() {
 		dispatchList = new LinkedList<Item>();
@@ -20,71 +23,73 @@ public class DispatchList {
 		dispatchList.add(item);
 	}
 
-	public void Yazdir() {
-		for (int i = 0; i < dispatchList.size(); i++) {
-			System.out.print(dispatchList.get(i).varis + " ");
-			System.out.print(dispatchList.get(i).oncelik + " ");
-			System.out.println(dispatchList.get(i).burstTime);
-		}
-	}
-
-	public void Fuckin_Dispatcher() {
+	public void General_Dispatcher() { // listedeki prosesleri gerekli kuyruklara atama
 		// dispatchList is full.
 		int size = dispatchList.size();
-		// System.out.println(size);
-		int used_items_count = 0;
-		while (used_items_count != size || !fpl.FPL_isEmpty() || !spl.SPL_isEmpty() || !rr.RR_isEmpty()) {
-			for (int i = 0; i < size; i++) {
+
+		int used_items_count = 0;// kullanılan item sayısı
+
+		while (used_items_count != size || !fpl.FPL_isEmpty() || !spl.SPL_isEmpty() || !rr.RR_isEmpty()) { // tüm
+																											// itemler
+																											// kullanıldığında
+																											// ve tüm
+																											// listeler
+																											// boşaldığında
+																											// duracak
+			for (int i = 0; i < size; i++) {// tüm listeyi dolaşıp zamana göre atama yapılmasını sağlıyor
+
 				if (dispatchList.size() == 0)
 					break;
+
 				if (dispatchList.get(0).varis > damn_timer) {
-					// System.out.println("varis: "+dispatchList.get(0).varis+" timer:
-					// "+damn_timer);
 					break;
-				} else if (dispatchList.get(0).oncelik == 0) {// <=!!!
-					// System.out.println("varis: "+dispatchList.get(0).varis);
-					fcfs.FCFS_add(dispatchList.remove());
+				} else if (dispatchList.get(0).oncelik == 0) {// eğer ki ilgili proses gelmişse (zamana bağlı olarak)
+																// önceliğine göre atama işlemleri yapılıyor
+					gzk.FCFS_add(dispatchList.remove());
 					used_items_count++;
-					// System.out.println(damn_timer);
 				} else {
-					if (dispatchList.get(0).oncelik != 0) {
-						if (dispatchList.get(0).oncelik == 1) {
-							used_items_count++;
-							fpl.FPL_add(dispatchList.remove());
-						} else if (dispatchList.get(0).oncelik == 2) {
-							used_items_count++;
-							spl.SPL_add(dispatchList.remove());
-						} else {
-							used_items_count++;
-							rr.RR_add(dispatchList.remove());
-						}
+					if (dispatchList.get(0).oncelik != 0) {// eğer ki ilgili proses gelmişse (zamana bağlı olarak)
+															// önceliğine göre atama işlemleri yapılıyor
+						uj.UJ_add(dispatchList.remove()); // kullanıcı işi kuyruk'a ekleme işlemi yapılıyor
+						used_items_count++;
 					}
-
 				}
-
 			} // for bitis //time'a gore degerler atanıyor.
 
-			if (!(fcfs.FCFS_isEmpty())) {
-				int fcfs_ExecTime = fcfs.FCFS_execute(damn_timer);
-				damn_timer += fcfs_ExecTime;
-			} else if (!(fpl.FPL_isEmpty())) {
-				int fpl_ExecTime = fpl.FPL_execute(damn_timer);
-				damn_timer += fpl_ExecTime;
-			} else if (!(spl.SPL_isEmpty())) {
-				int spl_ExecTime = spl.SPL_execute(damn_timer);
-				damn_timer += spl_ExecTime;
-			} else if (!(rr.RR_isEmpty())) {
-				int rr_ExecTime = rr.RR_execute(damn_timer);
-				damn_timer += rr_ExecTime;
-			} else
-				damn_timer++;
+			if (!(uj.kuyruk.kuyrukBosMu()))// eğer ki kullanıcı işi kuyruk boş değil ise çalışması sağlanıyor ve düşük
+				uj.UJ_Dispatch(); // öncelikli kuyruklara içindeki prosesleri öncelik değerlerine göre dağıtıyor
+
+			Executer(); // listeleri çalıştırmaya yarıyor
 		}
 	}
 
-	public void TimeOut_Scanner(int gecenZaman) {
+	void Executer() {
+		if (!(gzk.FCFS_isEmpty())) { // fcfs kuyruğu boş değil ise ilk olarak bu kuyruk işlem görüyor eğer ki boş ise
+										// diğer kuyruklar aynı mantığa göre işlem görüyor
+			int gzk_ExecTime = gzk.FCFS_execute(damn_timer);
+			damn_timer += gzk_ExecTime;// prosesin işlem zamanı genel zamana ekleniyor.
+		} else if (!(fpl.FPL_isEmpty())) {
+			int fpl_ExecTime = fpl.FPL_execute(damn_timer);
+			damn_timer += fpl_ExecTime;
+		} else if (!(spl.SPL_isEmpty())) {
+			int spl_ExecTime = spl.SPL_execute(damn_timer);
+			damn_timer += spl_ExecTime;
+		} else if (!(rr.RR_isEmpty())) {
+			int rr_ExecTime = rr.RR_execute(damn_timer);
+			damn_timer += rr_ExecTime;
+		} else
+			damn_timer++;
+	}
+
+	public void TimeOut_Scanner(int gecenZaman) { // tüm listeleri tarıyor ve zaman aşımına uğrayan herhangi bir proses
+													// varsa gerekli işlemleri yapıyor
+
 		String text = "";
-		for (int i = 0; i < fcfs.kuyruk.kuyrukSize(); i++) {// fcfs checking
-			Item item = fcfs.kuyruk.Getir(i);
+
+		for (int i = 0; i < gzk.kuyruk.kuyrukSize(); i++) {// GercekZamanliKuyruk checking
+
+			Item item = gzk.kuyruk.Getir(i);
+
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
 			{
 				Random rng = new Random();
@@ -100,16 +105,20 @@ public class DispatchList {
 
 				System.out.println(text);
 
-				fcfs.kuyruk.kuyruktanCikar(i);
-				i--;
+				gzk.kuyruk.kuyruktanCikar(i);
+				i--; // İşlem gören eleman kaldırıldığı için o elemandan sonraki elemanlar bir birim
+						// sola kayıyor ve eğer ki i değerini
+						// bir birim azaltmazsak kaldırılan elemanın yerine gelen eleman atlanmış oluyor
 			}
 		}
+		// alt tarafta bulunan yapılar üst kısımdaki ile aynı işlevi yapmaktadır.
+		// Yalnızca kontrol edilen kuyruklar değişmiştir
+		
 		for (int i = 0; i < fpl.kuyruk.kuyrukSize(); i++) {// firstPriorityList checking
 			Item item = fpl.kuyruk.Getir(i);
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
 			{
 				Random rng = new Random();
-
 				// Rastgele RGB renkleri oluşturma
 				int r = rng.nextInt(256);
 				int g = rng.nextInt(256);
@@ -125,6 +134,7 @@ public class DispatchList {
 				i--;
 			}
 		}
+		
 		for (int i = 0; i < spl.kuyruk.kuyrukSize(); i++) {// secondPriorityList checking
 			Item item = spl.kuyruk.Getir(i);
 			if (gecenZaman - item.askiyaAlinma >= 20)// zaman aşımı oldu
@@ -156,7 +166,7 @@ public class DispatchList {
 				int r = rng.nextInt(256);
 				int g = rng.nextInt(256);
 				int b = rng.nextInt(256);
-				
+
 				text = String.format(
 						"\033[38;2;%d;%d;%dm%d sn proses zamanasimi      (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m",
 						r, g, b, gecenZaman, item.id, item.oncelik, item.burstTime);

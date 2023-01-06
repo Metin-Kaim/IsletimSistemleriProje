@@ -4,13 +4,6 @@ import java.util.Random;
 
 public class FirstPriList {
 
-//	private DispatchList dl;
-//	
-//	public FirstPriList(DispatchList dl)
-//	{
-//		this.dl=dl;
-//	}
-
 	SecondPriList spl = new SecondPriList();
 	Kuyruk kuyruk = new Kuyruk();
 
@@ -23,7 +16,6 @@ public class FirstPriList {
 		return kuyruk.kuyrukBosMu();
 	}
 
-//System.out.println("varis: " + item.varis + "  burst: " + item.burstTime);
 	int FPL_execute(int zaman) {// maine gidecek olan timer(ekleme islemi olacak)
 
 		Random rng = new Random();
@@ -33,19 +25,15 @@ public class FirstPriList {
 		int g = rng.nextInt(256);
 		int b = rng.nextInt(256);
 
-		// Rastgele renkleri kullanarak yazıyı biçimlendirme
-
 		DispatchList dl = Prosesler.dl;
 
-//		System.out.println();
-//		String text = String.format("\033[38;2;%d;%d;%dmFirst Priority\033[0m", r, g, b);
-		// System.out.println(text);
 		String text = "";
 
-		int timer = 0;
+		int timer = 0; // prosesin işlem gördüğü toplam zamanı tutan değer
 
 		Item item = kuyruk.kuyruktanCikar();
 
+		// Rastgele renkleri kullanarak yazıyı biçimlendirme
 		text = String.format(
 				"\033[38;2;%d;%d;%dm%2d sn proses basladi         (id: %2d   oncelik:%2d  kalan sure:%2d sn)\033[0m", r,
 				g, b, (zaman + timer), item.id, item.oncelik, item.burstTime);
@@ -55,10 +43,11 @@ public class FirstPriList {
 		timer++;
 		item.burstTime--;
 
-		item.askiyaAlinma = zaman + timer;
+		item.askiyaAlinma = zaman + timer; // ilgili itemin askıya alınma zamanını güncelliyor. (genel zaman + prosesin
+											// işlem için harcadığı zaman)
 
-		if (item.burstTime > 0) {
-			// System.out.print("spl gonderildi => ");
+		if (item.burstTime > 0) { // diğer kuyruğa atama işlemi
+
 			item.oncelik++;
 
 			text = String.format(
@@ -67,7 +56,7 @@ public class FirstPriList {
 
 			System.out.println(text);
 
-			spl.SPL_add(item);
+			spl.SPL_add(item); // 2. öncelikli kuyruğa atama
 
 		} else {
 			text = String.format(
@@ -77,8 +66,8 @@ public class FirstPriList {
 			System.out.println(text);
 		}
 
-		dl.TimeOut_Scanner(zaman + timer);
-		// System.out.println("--------------"+kuyruk.kuyrukSize()+"-----------");
+		dl.TimeOut_Scanner(zaman + timer); // zaman aşımı kontrolü
+
 		return timer;
 	}
 }
